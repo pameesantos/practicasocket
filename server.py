@@ -4,12 +4,12 @@ import socket
 TCP_IP = '127.0.0.1'
 TCP_PORT = 5664
 BUFFER_SIZE = 20 
-#mi_socket = socket.socket()
+cant_cli = 0
 def atiende_cliente(conn, addr):
     while 1:
         msg = ''
         datos = bytearray()
-        print ("[SERVIDOR ", addr, "] Esperando datos del cliente")
+        #print ("[SERVIDOR ", addr, "] Esperando datos del cliente")
         fin_msg = False
         try:
             while not fin_msg:
@@ -18,16 +18,13 @@ def atiende_cliente(conn, addr):
                     raise ConnectionError()
                     break
                 datos += recvd
-                print ("[SERVIDOR ", addr, "] Recibidos ", len(recvd), " bytes")
+                #print ("[SERVIDOR ", addr, "] Recibidos ", len(recvd), " bytes")
                 if b'\n' in recvd:
                     msg = datos.rstrip(b'\n').decode('utf-8')            
                     fin_msg = True
-            #print ("[SERVIDOR ", addr, "] Recibidos en total ", len(datos), " bytes")
-            print ("[SERVIDOR ", addr, "] Datos recibidos del cliente con exito: \"" + msg + "\"")
-            #print ("[SERVIDOR ", addr, "] Enviando respuesta para el cliente")
-            conn.send(datos)  # echo
-            #print ("[SERVIDOR ", addr, "] Respuesta enviada: \"" + msg + "\"")
-            #conn.close()
+            #print ("[SERVIDOR ", addr, "] ")
+            print ("El cliente dice: ", msg )
+            conn.send(datos)  
         except BaseException as error:
             print ("[SERVIDOR ", addr, "] [ERROR] Socket error: ", error)
             break
@@ -48,7 +45,10 @@ while 1:
     thread = threading.Thread(target=atiende_cliente,
                               args=[conn, addr],
                               daemon=True)
+    
     thread.start()
+    cant_cli +=1
+    print ('Cliente N°:', cant_cli)
     print ("[SERVIDOR ", addr, "] Conexion con el cliente realizada. Direccion de conexion:", addr)    
 
 print ("[SERVIDOR] Cerrando socket " + str(TCP_PORT))
