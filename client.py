@@ -1,6 +1,17 @@
 import sys
 import socket
 
+def escucha_servidor():
+    #while 1:
+    try:
+        datos = mi_socket.recv(1024)
+ #       if not datos:
+ #           break
+        print('Servidor: ',datos.decode())
+    except:
+        print("Conexión cerrada por el servidor")
+  #      break
+
 TCP_IP = '127.0.0.1'
 TCP_PORT = 5664
 BUFFER_SIZE = 20
@@ -11,28 +22,19 @@ mi_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 print ("[CLIENTE] Conectando")
 mi_socket.connect((TCP_IP, TCP_PORT))
-print ("[CLIENTE] soy el cliente: \"" + str(mi_socket.getsockname) + "\"")
-#print ("[CLIENTE] Enviando datos: \"" + MESSAGE + "\"")
+
+
 MESSAGE = ''
-while MESSAGE != "SALIR":
-	MESSAGE = input('Ingrese dato: ')
-	mi_socket.send((MESSAGE + '\n').encode('utf-8'))
+while 1:
+    MESSAGE = input('Cliente: ')
+    mi_socket.send((MESSAGE + '\n').encode('utf-8'))
+    if MESSAGE == "LOGOUT":
+        break
+    escucha_servidor()
 	
 	
 print ("[CLIENTE] Recibiendo datos del CLIENTE")
 
-msg = ''
-fin_msg = False
-datos = bytearray()
-while not fin_msg:
-	recibido = mi_socket.recv(BUFFER_SIZE)
-	datos += recibido
-	#print ("[CLIENTE] Recibidos ", len(recvd), " bytes")
-	if b'\n' in recvd:
-		msg = datos.rstrip(b'\n').decode('utf-8')
-		fin_msg = True
-#print ("[CLIENTE] Recibidos en total ", len(datos), " bytes")
-#print ("[CLIENTE] Dados recibidos en respuesta al CLIENTE: \"" + msg + "\"")
 print ("[CLIENTE] Cerrando conexion con el CLIENTE")
 mi_socket.close()
 
