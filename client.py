@@ -32,8 +32,6 @@ while 1:
     MESSAGE = input('Cliente: ')
     mi_socket.send((MESSAGE + '\n').encode('utf-8'))
     msje_serv = escucha_servidor()
-    print('esto dice msg:',MESSAGE.upper())
-    print('esto dice msje_serv:',msje_serv.upper())
     if (MESSAGE.upper() == "LOGOUT" and msje_serv.upper() == "LOGOUT"):
         break
     

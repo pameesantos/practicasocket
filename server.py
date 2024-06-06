@@ -23,14 +23,8 @@ def atiende_cliente(conn, addr):
                 print ("Cliente: ", msg )
                 reenviar(msg,conn,addr)
                 msje_serv=responde_cliente(conn,addr)
-                print('esto dice msg:',msg)
-                print('esto dice msje_serv:',msje_serv)
                 if (msje_serv.upper() == 'LOGOUT' and msg.upper() == 'LOGOUT'):
-                    #conn.close()
                     break
-                #finaliza=finalizachat(msje_serv,msg,conn) 
-                #if finaliza == 1:
-                #    break
                 conn.send((msje_serv + '\n').encode('utf-8'))
 
         except BaseException as error:
@@ -51,14 +45,10 @@ def finalizachat(msje_serv,msje_cli,conn):
         return 1
     return 0
 def reenviar(msje_cli,conn,addr):
-    if msje_cli.startswith('#'):
+    if '#' in msje_cli:
         for cliente in lista_conexiones:
-            if cliente != conn:
-                try:
-                    cliente.sendall(msje_cli)
-                except:
-                    cliente.close()
-                    lista_conexiones.remove(cliente)
+            cliente.sendall((msje_cli + '\n').encode('utf-8'))
+
 
 print ("[SERVIDOR] Iniciando")
 print ("[SERVIDOR] Abriendo socket " + str(TCP_PORT) + " y escuchando")
