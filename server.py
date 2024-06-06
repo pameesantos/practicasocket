@@ -13,7 +13,7 @@ def atiende_cliente(conn, addr):
         fin_msg = False
         try:
             while 1:
-                recvd = conn.recv(BUFFER_SIZE)
+                recvd = conn.recv(BUFFER_SIZE) #Se recibe el mensaje del cliente
                 if not recvd:
                     raise ConnectionError()
                     break
@@ -21,11 +21,11 @@ def atiende_cliente(conn, addr):
                 if b'\n' in recvd:
                     msg = datos.rstrip(b'\n').decode('utf-8')            
                 print ("Cliente: ", msg )
-                reenviar(msg,conn,addr)
-                msje_serv=responde_cliente(conn,addr)
-                if (msje_serv.upper() == 'LOGOUT' and msg.upper() == 'LOGOUT'):
+                reenviar(msg,conn,addr) #se llama a la función que verifica si se reenvia o no el mensaje enviado por el cliente
+                msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
+                if (msje_serv.upper() == 'LOGOUT' and msg.upper() == 'LOGOUT'): #Aca se determina si se cierra o no la conexión
                     break
-                conn.send((msje_serv + '\n').encode('utf-8'))
+                conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
 
         except BaseException as error:
             print ("[SERVIDOR ", addr, "] [ERROR] Socket error: ", error)
@@ -33,19 +33,18 @@ def atiende_cliente(conn, addr):
     print ("[SERVIDOR ", addr, "] cerrando conexion ", addr)
     conn.close()
 
-def responde_cliente(conn,addr):
+def responde_cliente(conn,addr): #Se ingresa el mensaje que se le va enviar al cliente
     msje = input('Servidor: ')
-    #conn.send((msje + '\n').encode('utf-8'))
     return msje
 
 
-def finalizachat(msje_serv,msje_cli,conn):
+def finalizachat(msje_serv,msje_cli,conn): # Se verifica si se cierra o no la conexión (condición: recibir LOGOUT de ambas partes)
     if msje_cli == 'LOGOUT' and msje_serv == 'LOGOUT':
         conn.close()
         return 1
     return 0
-def reenviar(msje_cli,conn,addr):
-    if '#' in msje_cli:
+def reenviar(msje_cli,conn,addr): #Se verifica si el mensaje recibido por el cliente tiene un # al principio
+    if '#' in msje_cli:  #En caso de que si, se envía ese mensaje a todos los clientes conectados
         for cliente in lista_conexiones:
             cliente.sendall((msje_cli + '\n').encode('utf-8'))
 
@@ -59,16 +58,15 @@ mi_socket.listen(1)
 while 1:
     print ("[SERVIDOR] Esperando conexion")
     conn, addr = mi_socket.accept()
-    lista_conexiones.append(conn)
-    thread = threading.Thread(target=atiende_cliente,
+    lista_conexiones.append(conn) #Se hace una lista llenandose de las conexiones que se van aceptando
+    thread = threading.Thread(target=atiende_cliente, 
                               args=[conn, addr],
                               daemon=True)
-    
+    #Se abre un hilo por cada conexión activa
     thread.start()
-    cant_cli +=1
+    cant_cli +=1 #es un contador de clientes conectados que en la siguiente linea se imprime
     print ('Cliente N°:', cant_cli)
     print ("[SERVIDOR ", addr, "] Conexion con el cliente realizada. Direccion de conexion:", addr)
-    print (threading.active_count())    
 
 print ("[SERVIDOR] Cerrando socket " + str(TCP_PORT))
 mi_socket.close()

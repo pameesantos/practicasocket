@@ -1,18 +1,14 @@
 import sys
 import socket
 
-def escucha_servidor():
-    #while 1:
+def escucha_servidor(): #Acá se escucha si el servidor envía un mensaje y lo imprime
     try:
         datos = mi_socket.recv(1024)
         if b'\n' in datos:
             msg = datos.rstrip(b'\n').decode('utf-8')            
- #       if not datos:
- #           break
         print('Servidor: ',datos.decode())
     except:
         print("Conexión cerrada por el servidor")
-  #      break
     return msg
 
 TCP_IP = '127.0.0.1'
@@ -29,10 +25,10 @@ mi_socket.connect((TCP_IP, TCP_PORT))
 
 MESSAGE = ''
 while 1:
-    MESSAGE = input('Cliente: ')
-    mi_socket.send((MESSAGE + '\n').encode('utf-8'))
-    msje_serv = escucha_servidor()
-    if (MESSAGE.upper() == "LOGOUT" and msje_serv.upper() == "LOGOUT"):
+    MESSAGE = input('Cliente: ') # se pide que ingrese a mano el usuario el mensaje que desee enviar
+    mi_socket.send((MESSAGE + '\n').encode('utf-8')) #se envía el mensaje anterior
+    msje_serv = escucha_servidor() #queda escuchando al servidor para recibir la respuesta
+    if (MESSAGE.upper() == "LOGOUT" and msje_serv.upper() == "LOGOUT"): #Acá se termina la conexión siempre y cuando se envie LOGOUT de ambas partes
         break
     
 	
