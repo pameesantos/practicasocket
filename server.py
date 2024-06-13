@@ -7,29 +7,31 @@ BUFFER_SIZE = 20
 cant_cli = 0
 lista_conexiones = []
 def atiende_cliente(conn, addr):
-    while 1:
+    #while 1:
+    #msg = ''
+    #datos = bytearray()
+        #fin_msg = False
+    try:
         msg = ''
         datos = bytearray()
-        fin_msg = False
-        try:
-            while 1:
-                recvd = conn.recv(BUFFER_SIZE) #Se recibe el mensaje del cliente
-                if not recvd:
-                    raise ConnectionError()
-                    break
-                datos += recvd
-                if b'\n' in recvd:
-                    msg = datos.rstrip(b'\n').decode('utf-8')            
-                print ("Cliente: ", msg )
-                reenviar(msg,conn,addr) #se llama a la función que verifica si se reenvia o no el mensaje enviado por el cliente
-                msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
-                if (msje_serv.upper() == 'LOGOUT' and msg.upper() == 'LOGOUT'): #Aca se determina si se cierra o no la conexión
-                    break
-                conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
+        while 1:
+            recvd = conn.recv(BUFFER_SIZE) #Se recibe el mensaje del cliente
+            if not recvd:
+                raise ConnectionError()
+                break
+            datos= recvd
+            if b'\n' in recvd:
+                msg = datos.rstrip(b'\n').decode('utf-8')            
+            print ("Cliente: ", msg )
+            reenviar(msg,conn,addr) #se llama a la función que verifica si se reenvia o no el mensaje enviado por el cliente
+            if (msg.upper() == 'LOGOUT'): #Aca se determina si se cierra o no la conexión
+                conn.close()
+                break
+            msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
+            conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
+    except BaseException as error:
+        print ("[SERVIDOR ", addr, "] [ERROR] Socket error: ", error)
 
-        except BaseException as error:
-            print ("[SERVIDOR ", addr, "] [ERROR] Socket error: ", error)
-            break
     print ("[SERVIDOR ", addr, "] cerrando conexion ", addr)
     conn.close()
 
@@ -44,7 +46,7 @@ def finalizachat(msje_serv,msje_cli,conn): # Se verifica si se cierra o no la co
         return 1
     return 0
 def reenviar(msje_cli,conn,addr): #Se verifica si el mensaje recibido por el cliente tiene un # al principio
-    if '#' in msje_cli:  #En caso de que si, se envía ese mensaje a todos los clientes conectados
+    if msje_cli[0]== '#':  #En caso de que si, se envía ese mensaje a todos los clientes conectados
         for cliente in lista_conexiones:
             cliente.sendall((msje_cli + '\n').encode('utf-8'))
 

@@ -27,10 +27,10 @@ MESSAGE = ''
 while 1:
     MESSAGE = input('Cliente: ') # se pide que ingrese a mano el usuario el mensaje que desee enviar
     mi_socket.send((MESSAGE + '\n').encode('utf-8')) #se envía el mensaje anterior
-    msje_serv = escucha_servidor() #queda escuchando al servidor para recibir la respuesta
-    if (MESSAGE.upper() == "LOGOUT" and msje_serv.upper() == "LOGOUT"): #Acá se termina la conexión siempre y cuando se envie LOGOUT de ambas partes
+    if (MESSAGE.upper() == "LOGOUT"): #Acá se termina la conexión siempre y cuando se envie LOGOUT 
+        mi_socket.close()    
         break
-    
+    msje_serv = escucha_servidor() #queda escuchando al servidor para recibir la respuesta        
 	
 	
 print ("[CLIENTE] Recibiendo datos del CLIENTE")
