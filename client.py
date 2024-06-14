@@ -1,6 +1,6 @@
 import sys
 import socket
-
+import threading
 def escucha_servidor(): #Acá se escucha si el servidor envía un mensaje y lo imprime
     try:
         datos = mi_socket.recv(1024)
@@ -10,10 +10,12 @@ def escucha_servidor(): #Acá se escucha si el servidor envía un mensaje y lo i
     except:
         print("Conexión cerrada por el servidor")
     return msg
-
+    
+########################################### EMPIEZA EL PROGRAMA ############################################
 TCP_IP = '127.0.0.1'
 TCP_PORT = 5664
 BUFFER_SIZE = 20
+MESSAGE = ''
 
 print ("[CLIENTE] Iniciando")
 
@@ -22,8 +24,6 @@ mi_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print ("[CLIENTE] Conectando")
 mi_socket.connect((TCP_IP, TCP_PORT))
 
-
-MESSAGE = ''
 while 1:
     MESSAGE = input('Cliente: ') # se pide que ingrese a mano el usuario el mensaje que desee enviar
     mi_socket.send((MESSAGE + '\n').encode('utf-8')) #se envía el mensaje anterior

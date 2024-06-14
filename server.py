@@ -23,12 +23,20 @@ def atiende_cliente(conn, addr):
             if b'\n' in recvd:
                 msg = datos.rstrip(b'\n').decode('utf-8')            
             print ("Cliente: ", msg )
-            reenviar(msg,conn,addr) #se llama a la función que verifica si se reenvia o no el mensaje enviado por el cliente
-            if (msg.upper() == 'LOGOUT'): #Aca se determina si se cierra o no la conexión
+            if msg[0] == '#':
+                reenviar(msg) #se llama a la función que verifica si se reenvia o no el mensaje enviado por el cliente
+            elif msg.upper() == 'LOGOUT': #Aca se determina si se cierra o no la conexión
                 conn.close()
                 break
-            msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
-            conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
+            elif msg == '?':
+                menu='\n'+"Ingrese # al principio del mensaje para reenviarlo a todos" + '\n' + "Ingrese LOGOUT para finalizar conexión"
+                conn.send((menu + '\n').encode('utf-8'))  
+            else:
+                #print('estoy adentro del elsee')
+                msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
+                conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
+                #msje_serv=responde_cliente(conn,addr) #Se pide respuesta para el cliente
+            #conn.send((msje_serv + '\n').encode('utf-8')) #En caso de que no se cierre, se envia el mensaje que se pidió en la línea 25
     except BaseException as error:
         print ("[SERVIDOR ", addr, "] [ERROR] Socket error: ", error)
 
@@ -45,10 +53,14 @@ def finalizachat(msje_serv,msje_cli,conn): # Se verifica si se cierra o no la co
         conn.close()
         return 1
     return 0
-def reenviar(msje_cli,conn,addr): #Se verifica si el mensaje recibido por el cliente tiene un # al principio
-    if msje_cli[0]== '#':  #En caso de que si, se envía ese mensaje a todos los clientes conectados
-        for cliente in lista_conexiones:
-            cliente.sendall((msje_cli + '\n').encode('utf-8'))
+def reenviar(msje_cli): #Se verifica si el mensaje recibido por el cliente tiene un # al principio
+    #cli=0
+    #if msje_cli[0]== '#':  #En caso de que si, se envía ese mensaje a todos los clientes conectados
+    for cliente in lista_conexiones:
+        print('envie a un cliente')
+        cliente.send((msje_cli + '\n').encode('utf-8'))
+            #cli+=1
+            #print('se envió a cliente: ', cli)
 
 
 print ("[SERVIDOR] Iniciando")
