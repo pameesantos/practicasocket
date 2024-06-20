@@ -8,4 +8,6 @@ Para finalizar la conexión el cliente debe mandar LOGOUT
 
 Para que el mensaje enviado por el cliente sea reenviado a todos los clientes, se le debe poner al mensaje un # al principio del mismo, de esta manera el servidor recibe el mensaje y lo reenvía a todos los clientes conectados
 
+Para consultar cómo salir y cómo enviar el mensaje a todos debe enviar al servidor el símbolo ?
+
 El puerto utilizado fue designado por el profesor: 5664 
